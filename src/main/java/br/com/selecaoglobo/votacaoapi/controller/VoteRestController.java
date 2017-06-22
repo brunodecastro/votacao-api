@@ -1,0 +1,74 @@
+package br.com.selecaoglobo.votacaoapi.controller;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import br.com.selecaoglobo.votacaoapi.dto.VoteDTO;
+import br.com.selecaoglobo.votacaoapi.exception.VoteApiException;
+import br.com.selecaoglobo.votacaoapi.model.Vote;
+import br.com.selecaoglobo.votacaoapi.service.VoteService;
+import io.swagger.annotations.ApiOperation;
+
+@RestController
+@RequestMapping("/votes")
+public class VoteRestController {
+    
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+    private final static AtomicInteger count = new AtomicInteger(0); 
+    
+    @Autowired
+    private VoteService voteService;
+    
+    @RequestMapping(path = "/", method = RequestMethod.GET)
+    @ApiOperation(value = "Obtém a lista de votos")
+    public List<Vote> getVotes() throws Exception {
+        return this.voteService.findAll();
+    }
+    
+    @RequestMapping(path = "/", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Deleta todos os votos")
+    public ResponseEntity<String> deleteAllVotes() throws Exception {
+        this.voteService.deleteAll();
+        return new ResponseEntity<>("Candidatos deletados com sucesso.", HttpStatus.OK);
+    }
+    
+    @RequestMapping(path = "/{contest_slug}", method = RequestMethod.GET)
+    @ApiOperation(value = "Obtém a votação geral")
+    public List<Vote> findByContestSlug(@PathVariable(name="contest_slug", required=true)  String contestSlug) throws Exception {
+        
+        return this.voteService.findByContestSlug(contestSlug);
+    }
+    
+    @RequestMapping(path = "/{contest_slug}/{id_candidate}", method = RequestMethod.GET)
+    @ApiOperation(value = "Obtém a votação por candidato")
+    public List<Vote> findByContestSlugAndIdCandidate(@PathVariable(name="contest_slug", required=true)  String contestSlug,
+                                                      @PathVariable(name="id_candidate", required=true)  String idCandidate) throws Exception {
+        
+        Integer idCandidateNumber = Integer.parseInt(idCandidate);
+        return this.voteService.findByContestSlugAndIdCandidate(contestSlug, idCandidateNumber);
+    }
+
+    @RequestMapping(path = "/{contest_slug}/{id_candidate}", method = RequestMethod.POST)
+    @ApiOperation(value = "Vota no Candidate para um Contest")
+    public ResponseEntity<String> addVote(@PathVariable(name="contest_slug", required=true)  String contestSlug,
+                                          @PathVariable(name="id_candidate", required=true)  Integer idCandidate,
+                                          @RequestHeader(name="user-token", required=true) final String userToken) throws VoteApiException {
+        
+        VoteDTO voteDTO = new VoteDTO(contestSlug, idCandidate, userToken);
+        LOG.info("REST POST: " + count.incrementAndGet());
+        this.voteService.vote(voteDTO);
+        return new ResponseEntity<>("Vote salvo com sucesso.", HttpStatus.CREATED);
+    }
+
+}

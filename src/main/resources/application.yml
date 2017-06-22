@@ -1,0 +1,62 @@
+
+# EMBEDDED SERVER CONFIGURATION (ServerProperties)
+server:
+    port: 9000
+
+
+spring:
+    # SPRING MVC (WebMvcProperties)
+    mvc:
+        locale: pt_BR
+        date-format: dd/MM/yyyy HH:mm:ss
+    
+    # LOGGING    
+    logging:
+        level:
+            ROOT: ERROR
+            org.springframework: ERROR
+            org.springframework.data: ERROR
+            org.mongodb: ERROR
+            br.com.selecaoglobo.votacaoapi: INFO
+        pattern:
+            console: "%d{dd-MM-yyyy HH:mm:ss} - %msg%n"
+        
+      
+    # SPRING RESOURCES HANDLING (ResourceProperties)
+    resources:
+        cache-period: 0  # Cache timeouts in headers sent to browser (seconds)
+    
+    #HTTP
+    http:
+        encoding:
+            charset: UTF-8
+            enabled: true
+            force: true
+
+
+    data:
+        # MONGODB (MongoProperties)
+        mongodb: 
+            host: localhost
+            port: 27017
+            database: votacao_db
+            #username:
+            #password:
+    
+    ## REDIS        
+    redis:
+        host: localhost
+        port: 6379
+        timeout: 5
+        pool:
+            min-idle: 1
+            max-active: 100
+    
+    ## RABBITMQ        
+    rabbitmq:
+        host: localhost
+        port: 5672
+        username: guest
+        password: guest
+
+        
