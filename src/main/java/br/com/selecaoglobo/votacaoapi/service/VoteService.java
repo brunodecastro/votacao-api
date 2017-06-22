@@ -13,7 +13,7 @@ import br.com.selecaoglobo.votacaoapi.dto.VoteDTO;
 import br.com.selecaoglobo.votacaoapi.exception.VoteApiException;
 import br.com.selecaoglobo.votacaoapi.model.Vote;
 import br.com.selecaoglobo.votacaoapi.queue.VoteRabbitProducer;
-import br.com.selecaoglobo.votacaoapi.queue.VoteMessagePublisher;
+import br.com.selecaoglobo.votacaoapi.queue.VoteRedisPublisher;
 import br.com.selecaoglobo.votacaoapi.repository.VoteRepository;
 import br.com.selecaoglobo.votacaoapi.repository.impl.VoteRepositoryImpl;
 
@@ -35,7 +35,7 @@ public class VoteService {
     private RedisCacheHelper redisCacheHelper;
     
     @Autowired
-    private VoteMessagePublisher redisMessagePublisher;
+    private VoteRedisPublisher voteRedisPublisher;
     
 	/**
 	 * Busca todos os votes
@@ -97,9 +97,9 @@ public class VoteService {
 	        this.checkVoteTokenRules(voteDTO.getUserToken());
 	        
 	        
-	        this.rabbitProducer.sendVote(voteDTO);
+//	        this.rabbitProducer.sendVote(voteDTO);
 	        
-//	        this.redisMessagePublisher.publishVote(voteDTO);
+	        this.voteRedisPublisher.sendVote(voteDTO);
 	        
 //            this.voteRepositoryImpl.votar(voteDTO.getContestSlug(), voteDTO.getIdCandidate());
         } catch (VoteApiException e) {

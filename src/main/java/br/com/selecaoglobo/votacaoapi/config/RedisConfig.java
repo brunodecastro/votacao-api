@@ -1,11 +1,9 @@
 package br.com.selecaoglobo.votacaoapi.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -18,12 +16,14 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import br.com.selecaoglobo.votacaoapi.dto.VoteDTO;
-import br.com.selecaoglobo.votacaoapi.queue.MessagePublisher;
-import br.com.selecaoglobo.votacaoapi.queue.VoteMessageListener;
-import br.com.selecaoglobo.votacaoapi.queue.VoteMessagePublisher;
+import br.com.selecaoglobo.votacaoapi.queue.MessageProducer;
+import br.com.selecaoglobo.votacaoapi.queue.VoteRedisSubscriber;
+import br.com.selecaoglobo.votacaoapi.queue.VoteRedisPublisher;
 
 @Configuration
 public class RedisConfig extends CachingConfigurerSupport {
+    
+    private static final String VOTE_MESSAGE_QUEUE = "vote.queue";
 
     @Value(value = "${spring.redis.host}")
     private String hostName;
@@ -74,13 +74,12 @@ public class RedisConfig extends CachingConfigurerSupport {
     }
 
     @Bean
-    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public VoteMessageListener voteMessageListener() {
-        return new VoteMessageListener();
+    public VoteRedisSubscriber voteRedisSubscriber() {
+        return new VoteRedisSubscriber();
     }
 
     @Bean
-    public MessageListenerAdapter voteMessageListenerAdapter(VoteMessageListener voteMessageListener) {
+    public MessageListenerAdapter voteMessageListenerAdapter(VoteRedisSubscriber voteMessageListener) {
         MessageListenerAdapter messageListenerAdapter = new MessageListenerAdapter(voteMessageListener);
         messageListenerAdapter.setSerializer(new Jackson2JsonRedisSerializer<>(VoteDTO.class));
         return messageListenerAdapter;
@@ -95,12 +94,12 @@ public class RedisConfig extends CachingConfigurerSupport {
     }
 
     @Bean
-    public MessagePublisher redisPublisher() {
-        return new VoteMessagePublisher(this.voteRedisTemplate(), this.topic());
+    public MessageProducer redisPublisher() {
+        return new VoteRedisPublisher(this.voteRedisTemplate(), this.topic());
     }
 
     @Bean
     public ChannelTopic topic() {
-        return new ChannelTopic("voteQueue");
+        return new ChannelTopic(VOTE_MESSAGE_QUEUE);
     }
 }

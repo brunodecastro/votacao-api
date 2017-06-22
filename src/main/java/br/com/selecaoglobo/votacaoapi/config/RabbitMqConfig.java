@@ -49,7 +49,7 @@ public class RabbitMqConfig {
     }
 
     @Bean
-//    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public VoteRabbitConsumer voteConsumer() {
         return new VoteRabbitConsumer();
     }
@@ -75,7 +75,7 @@ public class RabbitMqConfig {
         listenerContainer.setMessageConverter(this.jsonMessageConverter());
         listenerContainer.setAcknowledgeMode(AcknowledgeMode.AUTO);
         
-        listenerContainer.setMaxConcurrentConsumers(10);  
+        listenerContainer.setMaxConcurrentConsumers(5);  
         listenerContainer.setConcurrentConsumers(5);  
         listenerContainer.setAutoStartup(false);
         

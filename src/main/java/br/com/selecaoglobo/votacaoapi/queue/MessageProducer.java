@@ -2,7 +2,7 @@ package br.com.selecaoglobo.votacaoapi.queue;
 
 import br.com.selecaoglobo.votacaoapi.dto.VoteDTO;
 
-public interface MessagePublisher {
+public interface MessageProducer {
     
-    void publishVote(VoteDTO voteDTO);
+    void sendVote(VoteDTO voteDTO);
 }

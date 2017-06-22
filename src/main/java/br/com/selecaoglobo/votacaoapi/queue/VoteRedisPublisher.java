@@ -7,24 +7,29 @@ import org.springframework.stereotype.Component;
 
 import br.com.selecaoglobo.votacaoapi.dto.VoteDTO;
 
+/**
+ * Publisher da fila do Redis.
+ * 
+ * @author bruno.oliveira
+ */
 @Component
-public class VoteMessagePublisher implements MessagePublisher {
-    
+public class VoteRedisPublisher implements MessageProducer {
+
     @Autowired
     private RedisTemplate<String, VoteDTO> voteRedisTemplate;
-    
+
     @Autowired
     private ChannelTopic topic;
- 
-    public VoteMessagePublisher() {
+
+    public VoteRedisPublisher() {
     }
- 
-    public VoteMessagePublisher(RedisTemplate<String, VoteDTO> voteRedisTemplate, ChannelTopic topic) {
-      this.voteRedisTemplate = voteRedisTemplate;
-      this.topic = topic;
+
+    public VoteRedisPublisher(RedisTemplate<String, VoteDTO> voteRedisTemplate, ChannelTopic topic) {
+        this.voteRedisTemplate = voteRedisTemplate;
+        this.topic = topic;
     }
- 
-    public void publishVote(VoteDTO voteDTO) {
+
+    public void sendVote(VoteDTO voteDTO) {
         voteRedisTemplate.convertAndSend(topic.getTopic(), voteDTO);
     }
 

@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Document(collection = "vote")
 @CompoundIndexes({
     @CompoundIndex(name = "index_vote_contest", def = "{'contest_slug' : 1}"),
-    @CompoundIndex(name = "index_vote_contest_candidate", def = "{'contest_slug' : 1, 'id_candidate' : 1}")
+    @CompoundIndex(name = "index_vote_contest_candidate", def = "{'contest_slug' : 1, 'id_candidate' : 1}", unique=true)
 })    
 public class Vote implements Persistable<String> {
     

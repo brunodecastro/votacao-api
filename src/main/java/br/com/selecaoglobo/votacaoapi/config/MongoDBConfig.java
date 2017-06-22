@@ -33,9 +33,9 @@ public class MongoDBConfig {
           MongoClientOptions mongoClientOptions = MongoClientOptions.builder()
                   .maxWaitTime(1500)
                   .socketKeepAlive(true)
-                  .socketTimeout(3000)
+                  .socketTimeout(5000)
                   .minHeartbeatFrequency(25)
-                  .heartbeatSocketTimeout(3000)
+                  .heartbeatSocketTimeout(5000)
                   .writeConcern(WriteConcern.ACKNOWLEDGED)
                   .build();
           mongo.setMongoClientOptions(mongoClientOptions);

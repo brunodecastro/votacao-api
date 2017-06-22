@@ -24,9 +24,6 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/votes")
 public class VoteRestController {
     
-    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
-    private final static AtomicInteger count = new AtomicInteger(0); 
-    
     @Autowired
     private VoteService voteService;
     
@@ -65,9 +62,8 @@ public class VoteRestController {
                                           @PathVariable(name="id_candidate", required=true)  Integer idCandidate,
                                           @RequestHeader(name="user-token", required=true) final String userToken) throws VoteApiException {
         
-        VoteDTO voteDTO = new VoteDTO(contestSlug, idCandidate, userToken);
-        LOG.info("REST POST: " + count.incrementAndGet());
-        this.voteService.vote(voteDTO);
+        this.voteService.vote(new VoteDTO(contestSlug, idCandidate, userToken));
+        
         return new ResponseEntity<>("Vote salvo com sucesso.", HttpStatus.CREATED);
     }
 
