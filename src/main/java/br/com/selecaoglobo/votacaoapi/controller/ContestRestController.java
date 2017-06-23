@@ -23,6 +23,12 @@ public class ContestRestController {
 	@Autowired
 	private ContestService contestService;
 	
+	@RequestMapping(path = "/testRestService", method = RequestMethod.GET)
+	@ApiOperation(value = "Testa se o serviço rest do Controller está funcionando.")
+    public String testRestService() { 
+        return "OK"; 
+    }
+	
 	@RequestMapping(method = RequestMethod.GET)
 	@ApiOperation(value = "Obtém a lista de votações")
     public List<Contest> getContests() throws Exception {
