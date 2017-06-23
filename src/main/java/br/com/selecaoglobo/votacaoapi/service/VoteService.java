@@ -2,13 +2,18 @@ package br.com.selecaoglobo.votacaoapi.service;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.dozer.DozerBeanMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.selecaoglobo.votacaoapi.cache.RedisCacheHelper;
+import br.com.selecaoglobo.votacaoapi.dto.CandidateContestVotesDTO;
+import br.com.selecaoglobo.votacaoapi.dto.ContestVotesDTO;
 import br.com.selecaoglobo.votacaoapi.dto.VoteDTO;
 import br.com.selecaoglobo.votacaoapi.exception.VoteApiException;
 import br.com.selecaoglobo.votacaoapi.model.Vote;
@@ -37,6 +42,9 @@ public class VoteService {
     @Autowired
     private VoteRedisPublisher voteRedisPublisher;
     
+    @Autowired
+    private DozerBeanMapper dozerMapper;
+    
 	/**
 	 * Busca todos os votes
 	 * @return List<Vote>
@@ -52,23 +60,20 @@ public class VoteService {
         this.voteRepository.deleteAll();
     }
 	
-	/**
-	 * Obtém a votação geral
-	 * @param contestSlug
-	 * @return List<Vote>
-	 */
-    public List<Vote> findByContestSlug(String contestSlug) {
-        return this.voteRepository.findByContestSlug(contestSlug);
-    }
-    
     /**
      * Obtém a votação por candidato
      * @param contestSlug
      * @param idCandidate
-     * @return List<Vote>
+     * @return CandidateContestVotesDTO
      */
-    public List<Vote> findByContestSlugAndIdCandidate(String contestSlug, Integer idCandidate) {
-        return this.voteRepository.findByContestSlugAndIdCandidate(contestSlug, idCandidate);
+    public CandidateContestVotesDTO findByContestAndCandidate(String contestSlug, Integer idCandidate) {
+        List<Vote> votes = this.voteRepository.findByContestSlugAndIdCandidate(contestSlug, idCandidate);
+        
+        List<CandidateContestVotesDTO> candidateContestVotes = votes.stream()
+                .map(entity -> dozerMapper.map(entity, CandidateContestVotesDTO.class))
+                .collect(Collectors.toList());
+        
+        return CollectionUtils.isEmpty(candidateContestVotes) ? null : candidateContestVotes.get(0);
     }
 
 	/**
@@ -84,6 +89,15 @@ public class VoteService {
 	    vote.setIdCandidate(idCandidate);
 		return this.voteRepository.save(vote);
 	}
+	
+	 /**
+     * Busca os votos do contest.
+     * @param contestSlug
+     * @return ContestVotesDTO
+     */
+    public ContestVotesDTO findVotesResultForContest(String contestSlug) {
+        return this.voteRepositoryImpl.findVotesResultForContest(contestSlug);
+    }
 	
 	/**
 	 * Vota.

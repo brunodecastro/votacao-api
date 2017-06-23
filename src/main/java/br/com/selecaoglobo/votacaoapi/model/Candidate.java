@@ -4,6 +4,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -15,6 +16,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 @Document(collection = "candidate")
+@CompoundIndex(name = "index_candidate_contest", def = "{'contest_slug' : 1}")
 public class Candidate {
     
     @Id

@@ -1,10 +1,7 @@
 package br.com.selecaoglobo.votacaoapi.controller;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.selecaoglobo.votacaoapi.dto.CandidateContestVotesDTO;
+import br.com.selecaoglobo.votacaoapi.dto.ContestVotesDTO;
 import br.com.selecaoglobo.votacaoapi.dto.VoteDTO;
 import br.com.selecaoglobo.votacaoapi.exception.VoteApiException;
 import br.com.selecaoglobo.votacaoapi.model.Vote;
@@ -41,21 +40,21 @@ public class VoteRestController {
     }
     
     @RequestMapping(path = "/{contest_slug}", method = RequestMethod.GET)
-    @ApiOperation(value = "Obtém a votação geral")
-    public List<Vote> findByContestSlug(@PathVariable(name="contest_slug", required=true)  String contestSlug) throws Exception {
+    @ApiOperation(value = "Obtém a votação geral do contest")
+    public ContestVotesDTO findVotesResultForContest(@PathVariable(name="contest_slug", required=true)  String contestSlug) throws Exception {
         
-        return this.voteService.findByContestSlug(contestSlug);
+        return this.voteService.findVotesResultForContest(contestSlug);
     }
     
     @RequestMapping(path = "/{contest_slug}/{id_candidate}", method = RequestMethod.GET)
     @ApiOperation(value = "Obtém a votação por candidato")
-    public List<Vote> findByContestSlugAndIdCandidate(@PathVariable(name="contest_slug", required=true)  String contestSlug,
+    public CandidateContestVotesDTO findByContestSlugAndIdCandidate(@PathVariable(name="contest_slug", required=true)  String contestSlug,
                                                       @PathVariable(name="id_candidate", required=true)  String idCandidate) throws Exception {
         
         Integer idCandidateNumber = Integer.parseInt(idCandidate);
-        return this.voteService.findByContestSlugAndIdCandidate(contestSlug, idCandidateNumber);
+        return this.voteService.findByContestAndCandidate(contestSlug, idCandidateNumber);
     }
-
+    
     @RequestMapping(path = "/{contest_slug}/{id_candidate}", method = RequestMethod.POST)
     @ApiOperation(value = "Vota no Candidate para um Contest")
     public ResponseEntity<String> addVote(@PathVariable(name="contest_slug", required=true)  String contestSlug,

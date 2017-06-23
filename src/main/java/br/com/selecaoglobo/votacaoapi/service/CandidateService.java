@@ -7,12 +7,16 @@ import org.springframework.stereotype.Service;
 
 import br.com.selecaoglobo.votacaoapi.model.Candidate;
 import br.com.selecaoglobo.votacaoapi.repository.CandidateRepository;
+import br.com.selecaoglobo.votacaoapi.repository.impl.SequenceGeneratorRepositoryImpl;
 
 @Service
 public class CandidateService {
 
 	@Autowired
 	private CandidateRepository candidateRepository;
+	
+   @Autowired
+    private SequenceGeneratorRepositoryImpl sequenceGeneratorRepositoryImpl;
 	
 	/**
 	 * Busca todos os candidates
@@ -47,6 +51,7 @@ public class CandidateService {
 	 * @throws Exception 
 	 */
 	public Candidate save(Candidate candidate, String contestSlug) throws Exception {
+	    candidate.setId(this.sequenceGeneratorRepositoryImpl.getNextCandidateSequence());
 	    candidate.setContestSlug(contestSlug);
 		return this.candidateRepository.save(candidate);
 	}

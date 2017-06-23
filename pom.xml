@@ -42,13 +42,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
-		
+		<!-- 
 		<dependency>
 		    <groupId>org.mongodb</groupId>
 		    <artifactId>mongo-java-driver</artifactId>
 		    <version>3.4.2</version>
 		</dependency>
-		
+		 -->
 		<!-- Redis -->
 		<dependency>
             <groupId>org.springframework.boot</groupId>
@@ -97,6 +97,13 @@
 			<scope>provided</scope>
 		</dependency>
 		
+		<!-- Dozer -->
+		<dependency>
+		    <groupId>net.sf.dozer</groupId>
+		    <artifactId>dozer</artifactId>
+		    <version>5.5.1</version>
+		</dependency>
+		
 		<!-- Joda Time -->
 		<dependency>
 		    <groupId>joda-time</groupId>
@@ -107,6 +114,15 @@
 
 	<build>
 		<plugins>
+		    <plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-compiler-plugin</artifactId>
+			    <configuration>
+			        <source>${java.version}</source>
+			        <target>${java.version}</target>
+			    </configuration>
+			</plugin>  
+		
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
