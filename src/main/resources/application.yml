@@ -20,11 +20,6 @@ spring:
             br.com.selecaoglobo.votacaoapi: INFO
         pattern:
             console: "%d{dd-MM-yyyy HH:mm:ss} - %msg%n"
-        
-      
-    # SPRING RESOURCES HANDLING (ResourceProperties)
-    resources:
-        cache-period: 0  # Cache timeouts in headers sent to browser (seconds)
     
     #HTTP
     http:
@@ -40,8 +35,6 @@ spring:
             host: localhost
             port: 27017
             database: votacao_db
-            #username:
-            #password:
     
     ## REDIS        
     redis:
@@ -51,18 +44,13 @@ spring:
         pool:
             min-idle: 1
             max-active: 100
-    
-    ## RABBITMQ        
-    rabbitmq:
-        host: localhost
-        port: 5672
-        username: guest
-        password: guest
+
 
 ## VOTE API
 voteapi:
     cache:
-        vote:
-            # timeout do cache de votos em milesegundos
-            timeout: 1000
+        user-token:
+            # timeout do cache do user-token em minutos
+            timeout: 10
+            max-votes: 5
         

@@ -9,6 +9,7 @@ import org.dozer.DozerBeanMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import br.com.selecaoglobo.votacaoapi.cache.TokenVoteCache;
@@ -38,6 +39,20 @@ public class VoteService {
     
     @Autowired
     private DozerBeanMapper dozerMapper;
+    
+    private static int userTokenTimeOut;
+    
+    private static int userTokenMaxVotes;
+    
+    @Value("${voteapi.cache.user-token.timeout}")
+    private void setUserTokenTimeOut(String userTokenTimeOut) {
+        VoteService.userTokenTimeOut = Integer.parseInt(userTokenTimeOut);
+    } 
+    
+    @Value("${voteapi.cache.user-token.max-votes}")
+    public void setUserTokenMaxVotes(String userTokenMaxVotes) {
+        VoteService.userTokenMaxVotes = Integer.parseInt(userTokenMaxVotes);
+    } 
     
 	/**
 	 * Busca todos os votes
@@ -127,7 +142,7 @@ public class VoteService {
 	public void vote(VoteDTO voteDTO) throws VoteApiException {
 	    try {
 	        // Aplica as regras de votação por token em relação ao tempo.
-	        if(false)
+//	        if(false)
 	        this.checkVoteTokenRules(voteDTO.getUserToken());
 	        
 	        // Envia para a fila do Redis.
@@ -151,14 +166,14 @@ public class VoteService {
 	    
 	    int numberVotesByToken = TokenVoteCache.getCacheNumberOfVotesByToken(userToken);
 	    if(numberVotesByToken > 0) {
-	        if(numberVotesByToken >= 5) {
+	        if(numberVotesByToken >= userTokenMaxVotes) {
 	            throw new VoteApiException("É permitido apenas 5 votos a cada 10 minutos para um token.");
 	        } else {
 	            TokenVoteCache.incrementCacheNumberOfVotesByToken(userToken);
 	        }
 	    } else {
 	        // Coloca o token como chave do cache, com tempo de expiração de 10 minutos
-	        TokenVoteCache.putCacheNumberOfVotesByToken(userToken, 10, TimeUnit.MINUTES);
+	        TokenVoteCache.putCacheNumberOfVotesByToken(userToken, userTokenTimeOut, TimeUnit.MINUTES);
 	    }
 	}
 	

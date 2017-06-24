@@ -1,9 +1,6 @@
 package br.com.selecaoglobo.votacaoapi.cache;
 
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,20 +13,12 @@ public class VoteCache {
     private static final String PREFIX_KEY_VOTE_RESULTS_CONTEST = "KEY_VOTE_RESULTS_CONTEST_";
     private static final String PREFIX_KEY_VOTE_RESULTS_CONTEST_CANDIDATE = "KEY_VOTE_RESULTS_CONTEST_CANDIDATE_";
     
-   
-    private static int cacheVoteTimeOut;
-    
     private static RedisCacheHelper redisCacheHelper;
     
     @Autowired
     public void setRedisCacheHelper(RedisCacheHelper redisCacheHelper) {
         VoteCache.redisCacheHelper = redisCacheHelper;
     }
-    
-    @Value("${voteapi.cache.vote.timeout}")
-    public void setCacheVoteTimeOut(String cacheVoteTimeOut) {
-        VoteCache.cacheVoteTimeOut = Integer.parseInt(cacheVoteTimeOut);
-    } 
     
     /**
      * Incrementa os dados do voto no cache
@@ -42,27 +31,6 @@ public class VoteCache {
         
         // Adiciona os votos no cache do Redis, por contest e candidate
         redisCacheHelper.incrementValueInCache(getKeyCacheForVoteResultsByContestAndCandidate(contestSlug, idCandidate), 1);
-    }
-    
-    /**
-     * Adiciona os dados dos votos no cache do Redis, por contest
-     * @param contestSlug
-     * @param voteResult
-     */
-    public static void putVoteResultsByContestInCache(String contestSlug, Integer voteResult) {
-        // Adiciona os votos no cache do Redis, por contest
-        redisCacheHelper.putInCacheExpires(getKeyCacheForVoteResultsByContest(contestSlug), voteResult.toString(), cacheVoteTimeOut, TimeUnit.MILLISECONDS);
-    }
-    
-    /**
-     * Adiciona os dados dos votos no cache do Redis, por contest e candidate
-     * @param contestSlug
-     * @param idCandidate
-     * @param voteResult
-     */
-    public static void putVoteResultsByContestInCacheAndCandidate(String contestSlug, Integer idCandidate, Integer voteResult) {
-        // Adiciona os votos no cache do Redis, por contest
-        redisCacheHelper.putInCacheExpires(getKeyCacheForVoteResultsByContestAndCandidate(contestSlug, idCandidate), voteResult.toString(), cacheVoteTimeOut, TimeUnit.MILLISECONDS);
     }
     
     /**
