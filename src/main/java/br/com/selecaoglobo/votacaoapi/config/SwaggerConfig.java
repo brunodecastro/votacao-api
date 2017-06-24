@@ -27,8 +27,8 @@ public class SwaggerConfig {
 	
 	private ApiInfo metaData() {
         return new ApiInfoBuilder()
-        		.title("Seleção Globo.com - Votação REST API")
-        		.description("Votação REST API para seleção globo.com")
+        		.title("Votação REST API")
+        		.description("API para votação.")
         		.version("1.0")
         		.contact(new Contact("Bruno de Castro Oliveira", "https://www.linkedin.com/in/brunodecastro", "brunnodecastro@gmail.com"))
         		.build();
