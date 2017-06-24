@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.selecaoglobo.votacaoapi.cache.RedisCacheHelper;
+import br.com.selecaoglobo.votacaoapi.cache.TokenVoteCache;
+import br.com.selecaoglobo.votacaoapi.cache.VoteCache;
 import br.com.selecaoglobo.votacaoapi.dto.CandidateContestVotesDTO;
 import br.com.selecaoglobo.votacaoapi.dto.ContestVotesDTO;
 import br.com.selecaoglobo.votacaoapi.dto.VoteDTO;
@@ -63,13 +65,22 @@ public class VoteService {
      * @return CandidateContestVotesDTO
      */
     public CandidateContestVotesDTO findByContestAndCandidate(String contestSlug, Integer idCandidate) {
-        List<Vote> votes = this.voteRepository.findByContestSlugAndIdCandidate(contestSlug, idCandidate);
         
-        List<CandidateContestVotesDTO> candidateContestVotes = votes.stream()
-                .map(entity -> dozerMapper.map(entity, CandidateContestVotesDTO.class))
-                .collect(Collectors.toList());
+        if(contestSlug == null || idCandidate == null)
+            return null;
         
-        return CollectionUtils.isEmpty(candidateContestVotes) ? null : candidateContestVotes.get(0);
+        String objCache = VoteCache.getCacheForVoteResultsByContestAndCandidate(contestSlug, idCandidate);
+        if(objCache != null) {
+            return new CandidateContestVotesDTO(Integer.parseInt(objCache), contestSlug, idCandidate);
+        } else {    
+            List<Vote> votes = this.voteRepository.findByContestSlugAndIdCandidate(contestSlug, idCandidate);
+            
+            List<CandidateContestVotesDTO> candidateContestVotes = votes.stream()
+                    .map(entity -> dozerMapper.map(entity, CandidateContestVotesDTO.class))
+                    .collect(Collectors.toList());
+            
+            return CollectionUtils.isEmpty(candidateContestVotes) ? null : candidateContestVotes.get(0);
+        }    
     }
 
 	/**
@@ -92,7 +103,20 @@ public class VoteService {
      * @return ContestVotesDTO
      */
     public ContestVotesDTO findVotesResultForContest(String contestSlug) {
-        return this.voteRepositoryImpl.findVotesResultForContest(contestSlug);
+        
+        if(contestSlug == null)
+            return null;
+        
+        String objCache = VoteCache.getCacheForVoteResultsByContest(contestSlug);
+        if(objCache != null) {
+            LOG.info("REDIS: " + Integer.parseInt(objCache));
+            return new ContestVotesDTO(Integer.parseInt(objCache), contestSlug);
+        } else {    
+            ContestVotesDTO contestVotesDTO =  this.voteRepositoryImpl.findVotesResultForContest(contestSlug);
+            if(contestVotesDTO != null)
+                LOG.info("DB: " + contestVotesDTO.getResult());
+            return contestVotesDTO;
+        }    
     }
     
     /**
@@ -111,13 +135,13 @@ public class VoteService {
 	public void vote(VoteDTO voteDTO) throws VoteApiException {
 	    try {
 	        // Aplica as regras de votação por token em relação ao tempo.
-	        if(false)
-	        this.checkVoteTokenRules(voteDTO.getUserToken());
+//	        if(false)
+//	        this.checkVoteTokenRules(voteDTO.getUserToken());
 	        
 	        // Envia para a fila do Redis.
-	        this.voteRedisPublisher.sendVote(voteDTO);
+//	        this.voteRedisPublisher.sendVote(voteDTO);
 	        
-//            this.voteRepositoryImpl.votar(voteDTO.getContestSlug(), voteDTO.getIdCandidate());
+            this.voteRepositoryImpl.vote(voteDTO.getContestSlug(), voteDTO.getIdCandidate());
         } catch (VoteApiException e) {
            throw e;
 	    }catch (Exception e) {
@@ -133,16 +157,17 @@ public class VoteService {
 	 */
 	private void checkVoteTokenRules(String userToken) throws VoteApiException {
 	    
-	    String objCache = this.redisCacheHelper.getFromCache(userToken);
-	    if(objCache != null) {
-	        if(Integer.valueOf(objCache) >= 5) {
+	    int numberVotesByToken = TokenVoteCache.getCacheNumberOfVotesByToken(userToken);
+	    if(numberVotesByToken > 0) {
+	        if(numberVotesByToken >= 5) {
 	            throw new VoteApiException("É permitido apenas 5 votos a cada 10 minutos para um token.");
 	        } else {
-	            this.redisCacheHelper.incrementValueInCache(userToken, 1);
+	            TokenVoteCache.incrementCacheNumberOfVotesByToken(userToken);
 	        }
 	    } else {
 	        // Coloca o token como chave do cache, com tempo de expiração de 10 minutos
-	        this.redisCacheHelper.putInCacheExpires(userToken, "1", 10, TimeUnit.MINUTES);
+	        TokenVoteCache.putCacheNumberOfVotesByToken(userToken, 10, TimeUnit.MINUTES);
 	    }
 	}
+	
 }

@@ -59,4 +59,10 @@ spring:
         username: guest
         password: guest
 
+## VOTE API
+voteapi:
+    cache:
+        vote:
+            # timeout do cache de votos em milesegundos
+            timeout: 1000
         
