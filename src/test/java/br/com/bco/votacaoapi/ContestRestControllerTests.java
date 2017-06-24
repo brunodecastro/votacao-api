@@ -40,7 +40,7 @@ import br.com.bco.votacaoapi.service.ContestService;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class VotacaoApiApplicationTests {
+public class ContestRestControllerTests {
     
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(),
@@ -86,7 +86,7 @@ public class VotacaoApiApplicationTests {
     }
     
     @Test
-    public void getCandidatesTest() throws Exception {
+    public void getContestsTest() throws Exception {
         
         when(this.contestService.findVotesResultGroupedByContest()).thenReturn(this.contestVotesDTOList);
         

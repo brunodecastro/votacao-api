@@ -29,7 +29,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.bco.votacaoapi.model.Candidate;
-import br.com.bco.votacaoapi.repository.impl.SequenceGeneratorRepositoryImpl;
 import br.com.bco.votacaoapi.service.CandidateService;
 
 @RunWith(SpringRunner.class)
@@ -51,9 +50,6 @@ public class CandidateRestControllerTests {
     @MockBean
     private CandidateService candidateService;
     
-    @MockBean
-    private SequenceGeneratorRepositoryImpl sequenceGeneratorRepositoryImpl;
-
     private List<Candidate> candidateList = new ArrayList<Candidate>();
     
     @Before
@@ -119,7 +115,7 @@ public class CandidateRestControllerTests {
      * @return Candidate
      */
     private Candidate createValidCandidateFake() {
-        return new Candidate(this.sequenceGeneratorRepositoryImpl.getNextCandidateSequence(), 
+        return new Candidate(1, 
                             "candidate", 
                             "avatar1", 
                             "thevoice");

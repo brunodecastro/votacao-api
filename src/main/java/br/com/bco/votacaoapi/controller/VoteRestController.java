@@ -53,7 +53,7 @@ public class VoteRestController {
     }
     
     @RequestMapping(path = "/{contest_slug}/{id_candidate}", method = RequestMethod.GET)
-    @ApiOperation(value = "Obtém a votação por candidato")
+    @ApiOperation(value = "Obtém a votação por candidato de um contest")
     public CandidateContestVotesDTO findByContestSlugAndIdCandidate(@PathVariable(name="contest_slug", required=true)  String contestSlug,
                                                       @PathVariable(name="id_candidate", required=true)  String idCandidate) throws Exception {
         
