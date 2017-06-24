@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.selecaoglobo.votacaoapi.cache.RedisCacheHelper;
 import br.com.selecaoglobo.votacaoapi.cache.TokenVoteCache;
 import br.com.selecaoglobo.votacaoapi.cache.VoteCache;
 import br.com.selecaoglobo.votacaoapi.dto.CandidateContestVotesDTO;
@@ -35,9 +34,6 @@ public class VoteService {
     private VoteRepositoryImpl voteRepositoryImpl;
     
     @Autowired
-    private RedisCacheHelper redisCacheHelper;
-    
-    @Autowired
     private VoteRedisPublisher voteRedisPublisher;
     
     @Autowired
@@ -56,6 +52,24 @@ public class VoteService {
      */
     public void deleteAll() {
         this.voteRepository.deleteAll();
+    }
+    
+    /**
+     * Busca os votos do contest.
+     * @param contestSlug
+     * @return ContestVotesDTO
+     */
+    public ContestVotesDTO findVotesResultForContest(String contestSlug) {
+        
+        if(contestSlug == null)
+            return null;
+        
+        String objCache = VoteCache.getCacheForVoteResultsByContest(contestSlug);
+        if(objCache != null) {
+            return new ContestVotesDTO(Integer.parseInt(objCache), contestSlug);
+        } else {    
+            return this.voteRepositoryImpl.findVotesResultForContest(contestSlug);
+        }    
     }
 	
     /**
@@ -97,28 +111,6 @@ public class VoteService {
 		return this.voteRepository.save(vote);
 	}
 	
-	 /**
-     * Busca os votos do contest.
-     * @param contestSlug
-     * @return ContestVotesDTO
-     */
-    public ContestVotesDTO findVotesResultForContest(String contestSlug) {
-        
-        if(contestSlug == null)
-            return null;
-        
-        String objCache = VoteCache.getCacheForVoteResultsByContest(contestSlug);
-        if(objCache != null) {
-            LOG.info("REDIS: " + Integer.parseInt(objCache));
-            return new ContestVotesDTO(Integer.parseInt(objCache), contestSlug);
-        } else {    
-            ContestVotesDTO contestVotesDTO =  this.voteRepositoryImpl.findVotesResultForContest(contestSlug);
-            if(contestVotesDTO != null)
-                LOG.info("DB: " + contestVotesDTO.getResult());
-            return contestVotesDTO;
-        }    
-    }
-    
     /**
      * Busca a votação geral agrupado por contest.
      * @return ContestVotesDTO
@@ -135,13 +127,13 @@ public class VoteService {
 	public void vote(VoteDTO voteDTO) throws VoteApiException {
 	    try {
 	        // Aplica as regras de votação por token em relação ao tempo.
-//	        if(false)
-//	        this.checkVoteTokenRules(voteDTO.getUserToken());
+	        if(false)
+	        this.checkVoteTokenRules(voteDTO.getUserToken());
 	        
 	        // Envia para a fila do Redis.
-//	        this.voteRedisPublisher.sendVote(voteDTO);
+	        this.voteRedisPublisher.sendVote(voteDTO);
 	        
-            this.voteRepositoryImpl.vote(voteDTO.getContestSlug(), voteDTO.getIdCandidate());
+//            this.voteRepositoryImpl.vote(voteDTO.getContestSlug(), voteDTO.getIdCandidate());
         } catch (VoteApiException e) {
            throw e;
 	    }catch (Exception e) {

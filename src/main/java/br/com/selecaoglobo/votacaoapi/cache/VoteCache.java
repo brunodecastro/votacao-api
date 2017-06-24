@@ -100,7 +100,7 @@ public class VoteCache {
      * @return String
      */
     private static String getKeyCacheForVoteResultsByContestAndCandidate(String contestSlug, Integer idCandidate) {
-        return PREFIX_KEY_VOTE_RESULTS_CONTEST_CANDIDATE + contestSlug;
+        return PREFIX_KEY_VOTE_RESULTS_CONTEST_CANDIDATE + contestSlug + "_" + idCandidate;
     }
     
 }

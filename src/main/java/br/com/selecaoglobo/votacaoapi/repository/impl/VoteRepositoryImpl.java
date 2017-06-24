@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
@@ -17,8 +16,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
-
-import com.mongodb.WriteResult;
 
 import br.com.selecaoglobo.votacaoapi.cache.VoteCache;
 import br.com.selecaoglobo.votacaoapi.dto.ContestVotesDTO;
@@ -48,16 +45,16 @@ public class VoteRepositoryImpl {
         Update update = new Update().inc("result", 1);
 
         try {
-//            this.mongoTemplate.upsert(query, update, Vote.class);
-            
-            Vote vote = this.mongoTemplate.findAndModify(query, update, FindAndModifyOptions.options().upsert(true).returnNew(true), Vote.class);
-            
-            // Adiciona os dados do voto no cache
-//            VoteCache.putVoteResultsByContestInCache(vote.getContestSlug(), vote.getResult());
-//            VoteCache.putVoteResultsByContestInCacheAndCandidate(vote.getContestSlug(), vote.getIdCandidate(), vote.getResult());
+            this.mongoTemplate.upsert(query, update, Vote.class);
+                        
+            // Incrementa o voto no cache
             VoteCache.incrementVotesDataInCache(contestSlug, idCandidate);
+
         } catch (DuplicateKeyException e) {
+            // Necessário para problemas de concorrencia.
             this.mongoTemplate.updateFirst(query, update, Vote.class);
+            
+            // Incrementa o voto no cache
             VoteCache.incrementVotesDataInCache(contestSlug, idCandidate);
         }
         
