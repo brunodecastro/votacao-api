@@ -3,6 +3,7 @@ package br.com.bco.votacaoapi;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -29,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.bco.votacaoapi.dto.CandidateContestVotesDTO;
 import br.com.bco.votacaoapi.dto.ContestVotesDTO;
+import br.com.bco.votacaoapi.model.Vote;
 import br.com.bco.votacaoapi.service.VoteService;
 
 @RunWith(SpringRunner.class)
@@ -183,6 +186,30 @@ public class VoteRestControllerTests {
                 .andDo(print())
                 .andExpect(jsonPath("$.contestSlug", is(candidateContestBBB4.getContestSlug())))
                 .andExpect(jsonPath("$.result", is(candidateContestBBB4.getResult().intValue())));
+    }
+    
+    
+    /**
+     * Testa o serviço rest de voto de um Candidate de um Contest
+     * @throws Exception
+     */
+    @Test
+    public void voteTest() throws Exception {
+
+        Vote vote = new Vote("thevoice", 1);
+
+        String restUrl = "/votes/" + vote.getContestSlug() + "/" + vote.getIdCandidate();
+        
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("user-token", "token1");
+
+        mockMvc.perform(post(restUrl)
+                .headers(httpHeaders)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(this.objectMapper.writeValueAsBytes(vote)))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(content().string("Vote salvo com sucesso."));
     }
 
 }

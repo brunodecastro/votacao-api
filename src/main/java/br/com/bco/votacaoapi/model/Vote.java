@@ -54,6 +54,11 @@ public class Vote implements Persistable<String> {
     @LastModifiedDate
     private DateTime lastModifiedDate;
     
+    public Vote(String contestSlug, Integer idCandidate) {
+        this.setContestSlug(contestSlug);
+        this.setIdCandidate(idCandidate);
+    }
+    
     public Vote(Integer result, String contestSlug, Integer idCandidate) {
         this.setResult(result);
         this.setContestSlug(contestSlug);
