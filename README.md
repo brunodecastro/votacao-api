@@ -16,7 +16,7 @@
 
 #### Spring Boot
 
-Utilizado para geração da api como micro serviço e testes.
+Utilizado para geração da api como micro serviço e aplicação de testes.
 
 ====================
 
