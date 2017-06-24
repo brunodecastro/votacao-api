@@ -26,6 +26,12 @@ public class VoteRestController {
     @Autowired
     private VoteService voteService;
     
+    @RequestMapping(path = "/testRestService", method = RequestMethod.GET)
+    @ApiOperation(value = "Testa se o serviço rest do Controller está funcionando.")
+    public String testRestService() { 
+        return "OK"; 
+    }
+    
     @RequestMapping(path = "/", method = RequestMethod.GET)
     @ApiOperation(value = "Obtém a lista de votos")
     public List<Vote> getVotes() throws Exception {

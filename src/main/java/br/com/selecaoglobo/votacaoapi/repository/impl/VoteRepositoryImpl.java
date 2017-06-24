@@ -5,6 +5,8 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.matc
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -15,7 +17,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
-import br.com.selecaoglobo.votacaoapi.dto.CandidateContestVotesDTO;
 import br.com.selecaoglobo.votacaoapi.dto.ContestVotesDTO;
 import br.com.selecaoglobo.votacaoapi.model.Vote;
 
@@ -51,6 +52,7 @@ public class VoteRepositoryImpl {
     
     /**
      * Busca os votos do contest.
+     * 
      * @param contestSlug
      * @return ContestVotesDTO
      */
@@ -66,12 +68,20 @@ public class VoteRepositoryImpl {
         return results.getUniqueMappedResult();
     }
     
-//    /**
-//     * Busca os votos do contest.
-//     * @param contestSlug
-//     * @return ContestVotesDTO
-//     */
-//    public CandidateContestVotesDTO findByContestSlugAndIdCandidate(String contestSlug, Integer idCandidate) {
-//        
-//    }
+    /**
+     * Busca a votação geral agrupado por contest.
+     * 
+     * @return ContestVotesDTO
+     */
+    public List<ContestVotesDTO> findVotesResultGroupedByContest() {
+        
+        TypedAggregation<Vote> aggregation = newAggregation(Vote.class, 
+                                                            group("contestSlug").sum("result").as("result"),
+                                                            project("result").and("contestSlug").previousOperation());
+        
+        AggregationResults<ContestVotesDTO> results = this.mongoTemplate.aggregate(aggregation, Vote.class, ContestVotesDTO.class);
+        
+        return results.getMappedResults();
+    }
+    
 }

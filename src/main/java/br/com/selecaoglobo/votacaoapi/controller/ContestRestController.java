@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.selecaoglobo.votacaoapi.dto.ContestVotesDTO;
 import br.com.selecaoglobo.votacaoapi.model.Contest;
 import br.com.selecaoglobo.votacaoapi.service.ContestService;
 import io.swagger.annotations.ApiOperation;
@@ -30,9 +31,9 @@ public class ContestRestController {
     }
 	
 	@RequestMapping(method = RequestMethod.GET)
-	@ApiOperation(value = "Obtém a lista de votações")
-    public List<Contest> getContests() throws Exception {
-        return this.contestService.findAll();
+	@ApiOperation(value = "Obtém a lista de votações agrupado por Contest")
+    public List<ContestVotesDTO> getContests() throws Exception {
+        return this.contestService.findVotesResultGroupedByContest();
     }
 
 	@RequestMapping(method = RequestMethod.POST)

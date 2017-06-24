@@ -24,6 +24,12 @@ public class CandidateRestController {
     @Autowired
     private CandidateService candidateService;
     
+    @RequestMapping(path = "/candidates/testRestService", method = RequestMethod.GET)
+    @ApiOperation(value = "Testa se o serviço rest do Controller está funcionando.")
+    public String testRestService() { 
+        return "OK"; 
+    }
+    
     @RequestMapping(path = "/candidates", method = RequestMethod.GET)
     @ApiOperation(value = "Obtém a lista de candidatos")
     public List<Candidate> getCandidates() throws Exception {

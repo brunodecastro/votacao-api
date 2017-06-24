@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.selecaoglobo.votacaoapi.dto.ContestVotesDTO;
 import br.com.selecaoglobo.votacaoapi.model.Contest;
 import br.com.selecaoglobo.votacaoapi.repository.ContestRepository;
 
@@ -14,12 +15,15 @@ public class ContestService {
 	@Autowired
 	private ContestRepository contestRepository;
 	
+   @Autowired
+    private VoteService voteService;
+	
 	/**
-	 * Busca todos os contests
-	 * @return List<Contest>
+	 * Busca a votação geral agrupado por contest.
+	 * @return List<ContestVotesDTO>
 	 */
-	public List<Contest> findAll() {
-		return this.contestRepository.findAll();
+	public List<ContestVotesDTO> findVotesResultGroupedByContest() {
+	    return this.voteService.findVotesResultGroupedByContest();
 	}
 
 	/**

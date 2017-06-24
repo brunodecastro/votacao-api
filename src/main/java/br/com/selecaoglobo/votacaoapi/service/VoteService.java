@@ -17,7 +17,6 @@ import br.com.selecaoglobo.votacaoapi.dto.ContestVotesDTO;
 import br.com.selecaoglobo.votacaoapi.dto.VoteDTO;
 import br.com.selecaoglobo.votacaoapi.exception.VoteApiException;
 import br.com.selecaoglobo.votacaoapi.model.Vote;
-import br.com.selecaoglobo.votacaoapi.queue.VoteRabbitProducer;
 import br.com.selecaoglobo.votacaoapi.queue.VoteRedisPublisher;
 import br.com.selecaoglobo.votacaoapi.repository.VoteRepository;
 import br.com.selecaoglobo.votacaoapi.repository.impl.VoteRepositoryImpl;
@@ -27,9 +26,6 @@ public class VoteService {
     
     private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private VoteRabbitProducer rabbitProducer;
-    
 	@Autowired
 	private VoteRepository voteRepository;
 	
@@ -98,6 +94,14 @@ public class VoteService {
     public ContestVotesDTO findVotesResultForContest(String contestSlug) {
         return this.voteRepositoryImpl.findVotesResultForContest(contestSlug);
     }
+    
+    /**
+     * Busca a votação geral agrupado por contest.
+     * @return ContestVotesDTO
+     */
+    public List<ContestVotesDTO> findVotesResultGroupedByContest() {
+        return this.voteRepositoryImpl.findVotesResultGroupedByContest();
+    }
 	
 	/**
 	 * Vota.
@@ -110,9 +114,7 @@ public class VoteService {
 	        if(false)
 	        this.checkVoteTokenRules(voteDTO.getUserToken());
 	        
-	        
-//	        this.rabbitProducer.sendVote(voteDTO);
-	        
+	        // Envia para a fila do Redis.
 	        this.voteRedisPublisher.sendVote(voteDTO);
 	        
 //            this.voteRepositoryImpl.votar(voteDTO.getContestSlug(), voteDTO.getIdCandidate());
