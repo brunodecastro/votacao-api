@@ -142,13 +142,11 @@ public class VoteService {
 	public void vote(VoteDTO voteDTO) throws VoteApiException {
 	    try {
 	        // Aplica as regras de votação por token em relação ao tempo.
-	        if(false)
 	        this.checkVoteTokenRules(voteDTO.getUserToken());
 	        
 	        // Envia para a fila do Redis.
 	        this.voteRedisPublisher.sendVote(voteDTO);
 	        
-//            this.voteRepositoryImpl.vote(voteDTO.getContestSlug(), voteDTO.getIdCandidate());
         } catch (VoteApiException e) {
            throw e;
 	    }catch (Exception e) {

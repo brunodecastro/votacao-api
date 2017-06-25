@@ -30,6 +30,13 @@ public class ContestRestController {
         return "OK"; 
     }
 	
+	@RequestMapping(path = "/contests", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Deleta todos os contests")
+    public ResponseEntity<String> deleteAllCandidates() throws Exception {
+        this.contestService.deleteAll();
+        return new ResponseEntity<>("Contests deletados com sucesso.", HttpStatus.OK);
+    }
+	
 	@RequestMapping(method = RequestMethod.GET)
 	@ApiOperation(value = "Obtém a lista de votações agrupado por Contest")
     public List<ContestVotesDTO> getContests() throws Exception {

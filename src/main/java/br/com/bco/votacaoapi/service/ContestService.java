@@ -25,6 +25,13 @@ public class ContestService {
 	public List<ContestVotesDTO> findVotesResultGroupedByContest() {
 	    return this.voteService.findVotesResultGroupedByContest();
 	}
+	
+	/**
+     * Deleta todos os contests
+     */
+    public void deleteAll() {
+        this.contestRepository.deleteAll();
+    }
 
 	/**
 	 * Salva o contest
