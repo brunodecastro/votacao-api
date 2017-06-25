@@ -106,8 +106,9 @@
 	</dependencies>
 
 	<build>
-	    <finalName>votacao-api</finalName>
-	
+	    <finalName>votacao-api-${spring.profiles.active}</finalName>
+	    
+        
 		<plugins>
 		    <plugin>
 			    <groupId>org.apache.maven.plugins</groupId>
@@ -117,7 +118,7 @@
 			        <target>${java.version}</target>
 			    </configuration>
 			</plugin>  
-		
+			
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -137,5 +138,32 @@
 		</plugins>
 	</build>
 
+    <profiles>
 
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>docker</id>
+            <properties>
+                <spring.profiles.active>docker</spring.profiles.active>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>prd</id>
+            <properties>
+                <spring.profiles.active>prd</spring.profiles.active>
+            </properties>
+        </profile>
+
+    </profiles>
+    
 </project>

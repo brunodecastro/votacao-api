@@ -39,7 +39,7 @@ import br.com.bco.votacaoapi.service.ContestService;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
+@ActiveProfiles({"test", "dev"})
 public class ContestRestControllerTests {
     
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),

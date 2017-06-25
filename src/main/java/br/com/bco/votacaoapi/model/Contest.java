@@ -12,7 +12,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -42,15 +41,13 @@ public class Contest implements Serializable {
     @NotNull(message = "A propriedade 'start_date' é obrigatória.")
 	@Field("start_date")
 	@JsonProperty("start_date")
-    @DateTimeFormat(iso = ISO.DATE)
-	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ssZ", timezone="UTC")
+    @DateTimeFormat(iso = ISO.DATE_TIME)
 	private Date startDate;
 	
     @NotNull(message = "A propriedade 'end_date' é obrigatória.")
 	@Field("end_date")
 	@JsonProperty("end_date")
-    @DateTimeFormat(iso = ISO.DATE)
-	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ssZ", timezone="UTC")
+    @DateTimeFormat(iso = ISO.DATE_TIME)
 	private Date endDate;
     
 }
