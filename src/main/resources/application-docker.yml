@@ -1,7 +1,7 @@
 
 # EMBEDDED SERVER CONFIGURATION (ServerProperties)
 server:
-    port: 9000
+    port: 8080
 
 
 spring:
