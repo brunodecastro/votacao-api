@@ -3,19 +3,8 @@
 * Api para votação.
 
 
-#### Tecnologias Utilizadas
-
-* Java 8
-* Spring Boot 1.5.4
-* Maven 3.1.1
-* Redis 3.2.9
-* MongoDB 3.4.4
-* Swagger 2.6.1
-
-
-====================
-
 #### Iniciar a Aplicação
+---------------
 
 Se quiser rodar com Docker:
 
@@ -29,8 +18,11 @@ docker-compose up
 
 A aplicação irá rodar na url [http://localhost:8080](http://localhost:8080)
 
+Obs: Não necessita da instalação do MongoDB nem do Redis. Ambos subirão como containers docker. 
+
 
  #### Alternativa para rodar a api: 
+ ---------------
  
  Faça o download do [Maven](https://maven.apache.org/download.cgi?Preferred=ftp%3A%2F%2Fmirror.reverse.net%2Fpub%2Fapache%2F) e faça sua instalação: [Maven Install](https://maven.apache.org/install.html)
  Necessita da instalação do [MondoDB](https://www.mongodb.com/download-center#community) e do [Redis](https://redis.io/download). 
@@ -50,9 +42,8 @@ java -jar target/votacao-api-dev.jar
  
  Acesse a documentação da api na url:
  
- ##### `[http://localhost:8080](http://localhost:8080)`
+ ##### [http://localhost:9000](http://localhost:9000)
 
-====================
 
 
 #### Arquitetura e Tecnologias Utilizadas
@@ -66,19 +57,17 @@ java -jar target/votacao-api-dev.jar
 * Swagger 2.6.1
 
 
-====================
-
 #### Spring Boot
 
 Utilizado para geração da api como micro serviço e aplicação de testes.
 
-====================
+
 
 #### Swagger
 
 Utilizado para documentação da api.
 
-====================
+
 
 #### Redis
 
@@ -87,7 +76,7 @@ Utilizado para documentação da api.
 
 Utilizado para cache de dados e fila de requisições.
 
-====================
+
 
 #### MongoDB
 
