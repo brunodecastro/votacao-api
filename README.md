@@ -32,17 +32,27 @@ A aplicação irá rodar na url [http://localhost:8080](http://localhost:8080)
 
  #### Alternativa para rodar a api: 
  
- Gerar o pacote:
+ Faça o download do [Maven](https://maven.apache.org/download.cgi?Preferred=ftp%3A%2F%2Fmirror.reverse.net%2Fpub%2Fapache%2F) e faça sua instalação: [Maven Install](https://maven.apache.org/install.html)
+ Necessita da instalação do [MondoDB](https://www.mongodb.com/download-center#community) e do [Redis](https://redis.io/download). 
+ Estão configurados nas portas padrões e no host: `localhost`. 
  
- ##### `mvn clean install` na raiz da aplicação.
+Rode nesse diretório:
+ 
+ ```
+mvn clean install
+```
  
 Depois rode a api:
  
- ##### `java -jar target/votacao-api.jar` na raiz da aplicação.
+```
+java -jar target/votacao-api-dev.jar
+```
  
- Acesse a documentação da api:
+ Acesse a documentação da api na url:
  
- ##### `http://localhost:9000`
+ ##### `[http://localhost:8080](http://localhost:8080)`
+
+====================
 
 
 #### Arquitetura e Tecnologias Utilizadas
@@ -87,7 +97,6 @@ Utilizado para cache de dados e fila de requisições.
 
 Utilizado como banco de dados.
 
-====================
 
 
   
