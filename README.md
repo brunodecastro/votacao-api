@@ -1,4 +1,5 @@
 **API de Votação**
+---------------
 
 * Api para votação.
 
@@ -16,7 +17,7 @@ Rode nesse diretório:
 docker-compose up
 ```
 
-A aplicação irá rodar na url [http://localhost:8080](http://localhost:8080)
+ Acesse a documentação da api na url: [http://localhost:8080](http://localhost:8080)
 
 Obs: Não necessita da instalação do MongoDB nem do Redis. Ambos subirão como containers docker. 
 
@@ -40,9 +41,7 @@ Depois rode a api:
 java -jar target/votacao-api-dev.jar
 ```
  
- Acesse a documentação da api na url:
- 
- ##### [http://localhost:9000](http://localhost:9000)
+ Acesse a documentação da api na url: [http://localhost:9000](http://localhost:9000)
 
 
 
